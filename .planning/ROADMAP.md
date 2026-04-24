@@ -36,11 +36,14 @@ Plans:
 
 ### Phase 2: Metadata Extraction & Playback Controls
 
-**Goal:** Extract now-playing metadata from YouTube Music DOM and provide playback controls.
+**Goal:** Extract now-playing metadata from YouTube Music DOM and provide playback controls via IPC. Main process polls ytmView with executeJavaScript, diffs changes, broadcasts to renderers. Playback commands simulate DOM clicks.
 
-**Requirements:** [To be planned]
+**Requirements:** [META-01, META-02, CTRL-01]
 
-**Plans:** [To be planned]
+**Plans:** 1 plan
+
+Plans:
+- [ ] 02-01-PLAN.md — Metadata extraction pipeline + playback controls + preload API
 
 ### Phase 3: Mini Player
 
