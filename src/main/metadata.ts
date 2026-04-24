@@ -1,4 +1,4 @@
-import { WebContentsView, BrowserWindow } from 'electron'
+import { WebContentsView, BrowserWindow, net } from 'electron'
 import { YTM_SELECTORS } from './ytm-selectors'
 import type { NowPlayingMetadata } from '../shared/types'
 
@@ -7,6 +7,26 @@ const POLL_INTERVAL_MS = 1000
 let pollTimer: ReturnType<typeof setInterval> | null = null
 let lastMetadataJson: string | null = null
 let consecutiveFailures = 0
+let cachedArtUrl: string | null = null
+let cachedArtDataUrl: string | null = null
+
+async function fetchAlbumArtAsDataUrl(url: string): Promise<string | null> {
+  // Return cached version if URL hasn't changed
+  if (url === cachedArtUrl && cachedArtDataUrl) return cachedArtDataUrl
+
+  try {
+    const response = await net.fetch(url)
+    if (!response.ok) return null
+    const buffer = Buffer.from(await response.arrayBuffer())
+    const contentType = response.headers.get('content-type') || 'image/jpeg'
+    const dataUrl = `data:${contentType};base64,${buffer.toString('base64')}`
+    cachedArtUrl = url
+    cachedArtDataUrl = dataUrl
+    return dataUrl
+  } catch {
+    return null
+  }
+}
 
 /**
  * JavaScript snippet that runs inside the YouTube Music page context.
@@ -80,7 +100,7 @@ function buildScrapeScript(): string {
         return {
           title: titleEl ? titleEl.textContent || null : null,
           artist: artistEl ? artistEl.textContent || null : null,
-          albumArtUrl: albumArtEl ? albumArtEl.getAttribute('src') || null : null,
+          albumArtUrl: albumArtEl ? albumArtEl.src || null : null,
           duration: duration,
           progress: progress,
           isPlaying: isPlaying,
@@ -117,6 +137,15 @@ export function startMetadataPolling(
       // Only broadcast on actual change (D-08)
       if (metadataJson !== lastMetadataJson) {
         lastMetadataJson = metadataJson
+
+        // Convert album art URL to base64 data URL for renderers
+        if (metadata?.albumArtUrl) {
+          const dataUrl = await fetchAlbumArtAsDataUrl(metadata.albumArtUrl)
+          if (dataUrl) {
+            metadata.albumArtUrl = dataUrl
+          }
+        }
+
         mainWindow.webContents.send('metadata-update', metadata)
         if (miniPlayer && !miniPlayer.isDestroyed()) {
           miniPlayer.webContents.send('metadata-update', metadata)

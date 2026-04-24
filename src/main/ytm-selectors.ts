@@ -14,7 +14,7 @@ export const YTM_SELECTORS = {
   artist: 'ytmusic-player-bar .content-info-wrapper .subtitle yt-formatted-string a',
 
   /** Album art — thumbnail image inside the player bar */
-  albumArt: 'ytmusic-player-bar .image img',
+  albumArt: 'ytmusic-player-bar .thumbnail-image-wrapper img',
 
   /** Play/pause button (uses id selector — most stable) */
   playPauseBtn: 'ytmusic-player-bar #play-pause-button',

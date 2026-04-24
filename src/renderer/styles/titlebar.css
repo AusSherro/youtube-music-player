@@ -35,6 +35,9 @@ body {
 
 .titlebar-left {
   display: flex;
+  -webkit-app-region: no-drag;
+  position: relative;
+  z-index: 10;
 }
 
 .titlebar-drag {

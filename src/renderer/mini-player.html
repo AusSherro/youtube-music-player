@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' https://*.googleusercontent.com https://*.ytimg.com https://lh3.googleusercontent.com">
   <title>YTP Mini Player</title>
   <link rel="stylesheet" href="./styles/mini-player.css">
 </head>
@@ -24,7 +23,7 @@
       </div>
     </div>
     <div class="mini-content">
-      <img id="album-art" alt="Album art" />
+      <img id="album-art" alt="Album art" referrerpolicy="no-referrer" />
       <div class="track-info">
         <div id="track-title">Not playing</div>
         <div id="track-artist"></div>

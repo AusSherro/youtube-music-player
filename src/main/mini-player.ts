@@ -37,10 +37,10 @@ export function createMiniPlayer(): BrowserWindow {
     alwaysOnTop: true,
     show: false,
     backgroundColor: '#0f0f0f',
-    skipTaskbar: true,
+    skipTaskbar: false,
     resizable: true,
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
+      preload: join(__dirname, '../preload/index.cjs'),
       contextIsolation: true,
       sandbox: true,
       nodeIntegration: false
