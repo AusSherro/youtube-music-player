@@ -7,6 +7,7 @@ const TITLEBAR_HEIGHT = 32
 export interface MainWindowResult {
   mainWindow: BrowserWindow
   ytmView: WebContentsView
+  showYtmView: () => void
 }
 
 export function createMainWindow(): MainWindowResult {
@@ -37,27 +38,32 @@ export function createMainWindow(): MainWindowResult {
 
   // Create WebContentsView for YouTube Music
   const ytmView = new WebContentsView()
-  mainWindow.contentView.addChildView(ytmView)
+  // Don't add ytmView as child yet — splash screen in index.html must be visible first.
+  // index.ts adds it on did-finish-load via showYtmView().
 
-  // Position below title bar
+  // Position below title bar (applied when view is added)
   const [width, height] = mainWindow.getContentSize()
-  ytmView.setBounds({
+  const ytmBounds = {
     x: 0,
     y: TITLEBAR_HEIGHT,
     width: width,
     height: height - TITLEBAR_HEIGHT
-  })
+  }
 
   // Update bounds on resize
   mainWindow.on('resize', () => {
     const [w, h] = mainWindow.getContentSize()
-    ytmView.setBounds({
-      x: 0,
-      y: TITLEBAR_HEIGHT,
-      width: w,
-      height: h - TITLEBAR_HEIGHT
-    })
+    ytmBounds.width = w
+    ytmBounds.height = h - TITLEBAR_HEIGHT
+    ytmView.setBounds(ytmBounds)
   })
+
+  // Called by index.ts after YTM loads to reveal the view (and hide splash)
+  function showYtmView(): void {
+    mainWindow.contentView.addChildView(ytmView)
+    const [w, h] = mainWindow.getContentSize()
+    ytmView.setBounds({ x: 0, y: TITLEBAR_HEIGHT, width: w, height: h - TITLEBAR_HEIGHT })
+  }
 
   // Strip "Electron" from UA to prevent Google sign-in blocking
   const defaultUA = ytmView.webContents.getUserAgent()
@@ -96,5 +102,5 @@ export function createMainWindow(): MainWindowResult {
     mainWindow.show()
   })
 
-  return { mainWindow, ytmView }
+  return { mainWindow, ytmView, showYtmView }
 }

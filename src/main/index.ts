@@ -17,7 +17,7 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  const { mainWindow: win, ytmView } = createMainWindow()
+  const { mainWindow: win, ytmView, showYtmView } = createMainWindow()
   mainWindow = win
 
   // Create mini player (starts hidden)
@@ -25,6 +25,9 @@ app.whenReady().then(() => {
 
   // Start metadata polling after YTM page loads (DOM must be ready)
   ytmView.webContents.on('did-finish-load', () => {
+    // Reveal YTM view (was hidden so splash screen could show)
+    showYtmView()
+
     stopMetadataPolling()
     startMetadataPolling(ytmView, win, miniPlayer)
 
