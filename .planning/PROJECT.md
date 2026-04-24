@@ -34,7 +34,7 @@ A dedicated Windows desktop wrapper for YouTube Music that runs outside the brow
 
 ## Current State
 
-Phase 01 in progress — scaffolding and core wrapper.
+Phase 01 complete — Electron app wraps YouTube Music in frameless window with custom dark title bar, Google sign-in, and Widevine DRM.
 
 ---
 *Last updated: 2026-04-24*
