@@ -164,3 +164,42 @@ body {
   background: var(--titlebar-btn-active);
   transition: none;
 }
+
+/* Progress bar — full-width thin bar at bottom of mini player (D-04) */
+#progress-container {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+}
+
+#progress-container:hover {
+  height: 5px;
+}
+
+#progress-fill {
+  height: 100%;
+  background: #ff0000;
+  width: 0%;
+  transition: width 0.3s linear;
+  pointer-events: none;
+}
+
+/* Navigation-away overlay (D-10) */
+#nav-away {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 15, 15, 0.92);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  z-index: 10;
+}
+
+#nav-away.hidden {
+  display: none;
+}

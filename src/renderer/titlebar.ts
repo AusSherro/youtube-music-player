@@ -23,3 +23,13 @@ function updateMaximizeIcon(isMaximized: boolean): void {
 
 window.electronAPI.onMaximizeChange(updateMaximizeIcon)
 window.electronAPI.isMaximized().then(updateMaximizeIcon)
+
+// Splash screen — hide when YTM finishes loading (D-08)
+const splash = document.getElementById('splash')
+if (splash) {
+  window.electronAPI.onYtmLoaded(() => {
+    splash.classList.add('hidden')
+    // Remove from DOM after fade-out transition
+    setTimeout(() => splash.remove(), 300)
+  })
+}

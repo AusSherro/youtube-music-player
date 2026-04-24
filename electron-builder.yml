@@ -13,6 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: ytp
+  icon: build/icon.png
   target:
     - nsis
     - portable

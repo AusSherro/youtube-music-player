@@ -11,6 +11,11 @@ const btnPrev = document.getElementById('btn-prev')!
 const btnNext = document.getElementById('btn-next')!
 const btnExpand = document.getElementById('btn-expand')!
 const btnClose = document.getElementById('btn-close')!
+const progressContainer = document.getElementById('progress-container')!
+const progressFill = document.getElementById('progress-fill')!
+const navAway = document.getElementById('nav-away')!
+
+let currentDuration = 0
 
 // Handle album art load errors — show fallback
 albumArt.addEventListener('error', () => {
@@ -36,6 +41,15 @@ window.electronAPI.onMetadataUpdate((metadata) => {
     btnPlay.innerHTML = metadata.isPlaying ? pauseSVG : playSVG
     btnPlay.setAttribute('aria-label', metadata.isPlaying ? 'Pause' : 'Play')
     btnPlay.setAttribute('title', metadata.isPlaying ? 'Pause' : 'Play')
+
+    // Update progress bar (D-04, D-06)
+    currentDuration = metadata.duration
+    if (metadata.duration > 0) {
+      const pct = Math.min((metadata.progress / metadata.duration) * 100, 100)
+      progressFill.style.width = `${pct}%`
+    } else {
+      progressFill.style.width = '0%'
+    }
   } else {
     trackTitle.textContent = 'Not playing'
     trackArtist.textContent = ''
@@ -44,6 +58,9 @@ window.electronAPI.onMetadataUpdate((metadata) => {
     btnPlay.innerHTML = playSVG
     btnPlay.setAttribute('aria-label', 'Play')
     btnPlay.setAttribute('title', 'Play')
+
+    progressFill.style.width = '0%'
+    currentDuration = 0
   }
 })
 
@@ -55,5 +72,23 @@ btnNext.addEventListener('click', () => window.electronAPI.next())
 // Window controls
 btnExpand.addEventListener('click', () => window.electronAPI.expandFromMini())
 btnClose.addEventListener('click', () => window.electronAPI.close())
+
+// Progress bar click-to-seek (D-05)
+progressContainer.addEventListener('click', (e) => {
+  if (currentDuration <= 0) return
+  const rect = progressContainer.getBoundingClientRect()
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+  const seekSeconds = ratio * currentDuration
+  window.electronAPI.seek(seekSeconds)
+})
+
+// Navigation-away detection (D-10)
+window.electronAPI.onNavigationState((onYTM) => {
+  if (onYTM) {
+    navAway.classList.add('hidden')
+  } else {
+    navAway.classList.remove('hidden')
+  }
+})
 
 export {}
