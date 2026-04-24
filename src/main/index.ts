@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './window'
+import { startMetadataPolling, stopMetadataPolling } from './metadata'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -11,8 +12,13 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  const { mainWindow: win } = createMainWindow()
+  const { mainWindow: win, ytmView } = createMainWindow()
   mainWindow = win
+
+  // Start metadata polling after YTM page loads (DOM must be ready)
+  ytmView.webContents.on('did-finish-load', () => {
+    startMetadataPolling(ytmView, win)
+  })
 
   // Window control IPC handlers
   ipcMain.on('window-minimize', () => {
@@ -46,5 +52,6 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+  stopMetadataPolling()
   app.quit()
 })
