@@ -14,7 +14,7 @@ last_updated: "2026-04-24"
 | Phase | Name | Status | Plans | Date |
 |-------|------|--------|-------|------|
 | 01 | Core Wrapper & Window Chrome | 2/2 | Complete    | 2026-04-24 |
-| 02 | Metadata Extraction & Playback Controls | Planned | — | — |
+| 02 | Metadata Extraction & Playback Controls | 1/1 | Complete   | 2026-04-24 |
 | 03 | Mini Player | Planned | — | — |
 | 04 | Media Keys & Polish | Planned | — | — |
 
@@ -43,7 +43,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 02-01-PLAN.md — Metadata extraction pipeline + playback controls + preload API
+- [x] 02-01-PLAN.md — Metadata extraction pipeline + playback controls + preload API
 
 ### Phase 3: Mini Player
 
