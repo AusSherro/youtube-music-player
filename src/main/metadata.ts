@@ -128,6 +128,8 @@ export function startMetadataPolling(
   if (pollTimer) return // already polling
 
   pollTimer = setInterval(async () => {
+    if (ytmView.webContents.isDestroyed()) return
+
     try {
       const metadata: NowPlayingMetadata | null =
         await ytmView.webContents.executeJavaScript(scrapeScript)
@@ -146,7 +148,9 @@ export function startMetadataPolling(
           }
         }
 
-        mainWindow.webContents.send('metadata-update', metadata)
+        if (!mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('metadata-update', metadata)
+        }
         if (miniPlayer && !miniPlayer.isDestroyed()) {
           miniPlayer.webContents.send('metadata-update', metadata)
         }
@@ -162,7 +166,9 @@ export function startMetadataPolling(
       // Emit null on failure so renderers know metadata is unavailable
       if (consecutiveFailures <= 1) {
         lastMetadataJson = null
-        mainWindow.webContents.send('metadata-update', null)
+        if (!mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('metadata-update', null)
+        }
         if (miniPlayer && !miniPlayer.isDestroyed()) {
           miniPlayer.webContents.send('metadata-update', null)
         }
