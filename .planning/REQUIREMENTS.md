@@ -34,6 +34,15 @@ last_updated: "2026-04-24"
 |----|-------------|--------|-------|----------|
 | CTRL-01 | Play/pause, next, previous controls available via IPC, executed via DOM click simulation | Active | 2 | — |
 
+## Mini Player
+
+| ID | Requirement | Status | Phase | Verified |
+|----|-------------|--------|-------|----------|
+| MINI-01 | Always-on-top mini player window displaying now-playing metadata (title, artist, album art) | Active | 3 | — |
+| MINI-02 | Playback controls (play/pause, next, previous) in mini player | Active | 3 | — |
+| MINI-03 | Toggle between main window and mini player via shrink/expand buttons | Active | 3 | — |
+| MINI-04 | Mini player persists position and size across sessions via electron-store | Active | 3 | — |
+
 ---
 *Requirements created: 2026-04-24*
 *Last updated: 2026-04-24*

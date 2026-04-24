@@ -49,9 +49,15 @@ Plans:
 
 **Goal:** Resizable always-on-top mini player showing now-playing info and playback controls.
 
-**Requirements:** [To be planned]
+**Requirements:** [MINI-01, MINI-02, MINI-03, MINI-04]
 
-**Plans:** [To be planned]
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Create mini player window module and renderer (HTML/CSS/TS)
+- [ ] 03-02-PLAN.md — Wire toggle mechanism, metadata broadcast, and app integration
+
+**Success Criteria:** Mini player appears on shrink click, shows live metadata, playback controls work, expand returns to full window, position persists.
 
 ### Phase 4: Media Keys & Polish
 
