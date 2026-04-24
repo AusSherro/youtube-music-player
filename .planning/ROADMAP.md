@@ -15,8 +15,8 @@ last_updated: "2026-04-24"
 |-------|------|--------|-------|------|
 | 01 | Core Wrapper & Window Chrome | 2/2 | Complete    | 2026-04-24 |
 | 02 | Metadata Extraction & Playback Controls | 1/1 | Complete    | 2026-04-24 |
-| 03 | Mini Player | Planned | — | — |
-| 04 | Media Keys & Polish | Planned | — | — |
+| 03 | Mini Player | 2/2 | Complete    | 2026-04-24 |
+| 04 | Media Keys & Polish | 0/2 | Planned    | — |
 
 ## Phases
 
@@ -54,18 +54,24 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Create mini player window module and renderer (HTML/CSS/TS)
-- [ ] 03-02-PLAN.md — Wire toggle mechanism, metadata broadcast, and app integration
+- [x] 03-01-PLAN.md — Create mini player window module and renderer (HTML/CSS/TS)
+- [x] 03-02-PLAN.md — Wire toggle mechanism, metadata broadcast, and app integration
 
 **Success Criteria:** Mini player appears on shrink click, shows live metadata, playback controls work, expand returns to full window, position persists.
 
 ### Phase 4: Media Keys & Polish
 
-**Goal:** Global media key support and final polish.
+**Goal:** Global media key support, mini player progress bar with seeking, app icon, startup loading state, and lifecycle edge case handling.
 
-**Requirements:** [To be planned]
+**Requirements:** [MKEY-01, PROG-01, ICON-01, SPLS-01, PLSH-01, PLSH-02]
 
-**Plans:** [To be planned]
+**Plans:** 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Media keys, seek IPC, lifecycle edge cases (reload, navigation)
+- [ ] 04-02-PLAN.md — Progress bar, splash screen, app icon, navigation-away UI
+
+**Success Criteria:** Media keys control playback globally, progress bar shows and seeks, splash screen on startup, navigation-away handled, reload recovery works.
 
 ---
 *Roadmap created: 2026-04-24*

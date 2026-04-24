@@ -43,6 +43,32 @@ last_updated: "2026-04-24"
 | MINI-03 | Toggle between main window and mini player via shrink/expand buttons | Active | 3 | — |
 | MINI-04 | Mini player persists position and size across sessions via electron-store | Active | 3 | — |
 
+## Media Keys
+
+| ID | Requirement | Status | Phase | Verified |
+|----|-------------|--------|-------|----------|
+| MKEY-01 | Global media key support (MediaPlayPause, MediaNextTrack, MediaPreviousTrack) always registered at app startup | Active | 4 | — |
+
+## Progress Bar
+
+| ID | Requirement | Status | Phase | Verified |
+|----|-------------|--------|-------|----------|
+| PROG-01 | Mini player progress bar showing elapsed/total with click-to-seek | Active | 4 | — |
+
+## App Icon
+
+| ID | Requirement | Status | Phase | Verified |
+|----|-------------|--------|-------|----------|
+| ICON-01 | Custom .ico app icon for window title bar, taskbar, and installer | Active | 4 | — |
+
+## Startup & Polish
+
+| ID | Requirement | Status | Phase | Verified |
+|----|-------------|--------|-------|----------|
+| SPLS-01 | Dark splash/loading screen shown while YTM page loads | Active | 4 | — |
+| PLSH-01 | Navigation-away detection with mini player warning | Active | 4 | — |
+| PLSH-02 | Re-attach metadata polling on YTM page reload | Active | 4 | — |
+
 ---
 *Requirements created: 2026-04-24*
 *Last updated: 2026-04-24*
