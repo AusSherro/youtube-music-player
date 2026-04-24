@@ -16,5 +16,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Playback controls
   playPause: () => ipcRenderer.send('playback-command', 'play-pause'),
   next: () => ipcRenderer.send('playback-command', 'next'),
-  previous: () => ipcRenderer.send('playback-command', 'previous')
+  previous: () => ipcRenderer.send('playback-command', 'previous'),
+  // Mini player toggle
+  toggleMiniPlayer: () => ipcRenderer.send('toggle-mini-player'),
+  expandFromMini: () => ipcRenderer.send('expand-from-mini')
 })

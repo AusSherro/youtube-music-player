@@ -52,8 +52,8 @@ btnPlay.addEventListener('click', () => window.electronAPI.playPause())
 btnPrev.addEventListener('click', () => window.electronAPI.previous())
 btnNext.addEventListener('click', () => window.electronAPI.next())
 
-// Window controls — expandFromMini is wired in Plan 02
-btnExpand.addEventListener('click', () => (window.electronAPI as any).expandFromMini())
+// Window controls
+btnExpand.addEventListener('click', () => window.electronAPI.expandFromMini())
 btnClose.addEventListener('click', () => window.electronAPI.close())
 
 export {}

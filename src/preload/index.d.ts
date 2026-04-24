@@ -10,6 +10,8 @@ export interface ElectronAPI {
   playPause: () => void
   next: () => void
   previous: () => void
+  toggleMiniPlayer: () => void
+  expandFromMini: () => void
 }
 
 declare global {
