@@ -3,9 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
   <title>YTP</title>
+  <link rel="stylesheet" href="./styles/titlebar.css">
 </head>
 <body>
-  <div id="titlebar"></div>
+  <div id="titlebar">
+    <div class="titlebar-left">
+      <button class="titlebar-btn" id="btn-mini" aria-label="Mini player" title="Mini player">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M 2 3 L 5 7 L 8 3"/>
+        </svg>
+      </button>
+    </div>
+    <div class="titlebar-drag"></div>
+    <div class="titlebar-right">
+      <button class="titlebar-btn" id="btn-minimize" aria-label="Minimize" title="Minimize">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M 0 5 L 10 5"/>
+        </svg>
+      </button>
+      <button class="titlebar-btn" id="btn-maximize" aria-label="Maximize" title="Maximize">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="0.5" y="0.5" width="9" height="9"/>
+        </svg>
+      </button>
+      <button class="titlebar-btn titlebar-btn-close" id="btn-close" aria-label="Close" title="Close">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M 0 0 L 10 10 M 10 0 L 0 10"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <script type="module" src="./titlebar.ts"></script>
 </body>
 </html>

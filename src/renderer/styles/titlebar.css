@@ -1,0 +1,100 @@
+:root {
+  --titlebar-bg: #0f0f0f;
+  --titlebar-btn-hover: #2d2d2d;
+  --titlebar-btn-active: #3a3a3a;
+  --titlebar-close-hover: #c42b1c;
+  --titlebar-close-active: #b22a1a;
+  --titlebar-icon: #ffffff;
+  --titlebar-border: transparent;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--titlebar-bg);
+  font-family: -apple-system, system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--titlebar-icon);
+}
+
+#titlebar {
+  display: flex;
+  height: 32px;
+  background: var(--titlebar-bg);
+  border-bottom: 1px solid var(--titlebar-border);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.titlebar-left {
+  display: flex;
+}
+
+.titlebar-drag {
+  flex: 1;
+}
+
+.titlebar-right {
+  display: flex;
+}
+
+.titlebar-btn {
+  width: 46px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--titlebar-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  outline: none;
+  transition: background-color 100ms ease;
+}
+
+.titlebar-btn svg {
+  pointer-events: none;
+}
+
+.titlebar-btn:hover {
+  background: var(--titlebar-btn-hover);
+}
+
+.titlebar-btn:active {
+  background: var(--titlebar-btn-active);
+  transition: none;
+}
+
+.titlebar-btn-close:hover {
+  background: var(--titlebar-close-hover);
+}
+
+.titlebar-btn-close:active {
+  background: var(--titlebar-close-active);
+}
+
+.titlebar-btn:focus-visible {
+  background: var(--titlebar-btn-hover);
+  outline: 1px solid var(--titlebar-icon);
+  outline-offset: -1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .titlebar-btn {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .titlebar-btn {
+    border: 1px solid ButtonText;
+  }
+}
