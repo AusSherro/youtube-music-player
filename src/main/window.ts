@@ -21,6 +21,7 @@ export function createMainWindow(): MainWindowResult {
     frame: false,
     backgroundColor: '#0f0f0f',
     autoHideMenuBar: true,
+    icon: join(__dirname, '../../build/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
       contextIsolation: true,

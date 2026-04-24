@@ -39,6 +39,7 @@ export function createMiniPlayer(): BrowserWindow {
     backgroundColor: '#0f0f0f',
     skipTaskbar: false,
     resizable: true,
+    icon: join(__dirname, '../../build/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
       contextIsolation: true,
