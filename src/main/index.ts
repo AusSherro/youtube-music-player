@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './window'
 import { createMiniPlayer } from './mini-player'
 import { startMetadataPolling, stopMetadataPolling } from './metadata'
 import { executePlaybackCommand } from './playback'
+import { seekTo } from './playback'
 import type { PlaybackCommand } from '../shared/types'
 
 let mainWindow: BrowserWindow | null = null
@@ -24,8 +25,45 @@ app.whenReady().then(() => {
 
   // Start metadata polling after YTM page loads (DOM must be ready)
   ytmView.webContents.on('did-finish-load', () => {
+    stopMetadataPolling()
     startMetadataPolling(ytmView, win, miniPlayer)
+
+    // Signal renderer to hide splash screen (D-08)
+    win.webContents.send('ytm-loaded')
   })
+
+  // Navigation-away detection (D-10)
+  ytmView.webContents.on('did-navigate', (_event, url) => {
+    try {
+      const hostname = new URL(url).hostname
+      const onYTM = hostname === 'music.youtube.com'
+      win.webContents.send('navigation-state', onYTM)
+      if (miniPlayer && !miniPlayer.isDestroyed()) {
+        miniPlayer.webContents.send('navigation-state', onYTM)
+      }
+    } catch {
+      // Invalid URL — treat as not on YTM
+      win.webContents.send('navigation-state', false)
+      if (miniPlayer && !miniPlayer.isDestroyed()) {
+        miniPlayer.webContents.send('navigation-state', false)
+      }
+    }
+  })
+
+  // Global media keys (D-01, D-02, D-03)
+  const mediaKeyBindings: Array<[string, PlaybackCommand]> = [
+    ['MediaPlayPause', 'play-pause'],
+    ['MediaNextTrack', 'next'],
+    ['MediaPreviousTrack', 'previous']
+  ]
+  for (const [accelerator, command] of mediaKeyBindings) {
+    const success = globalShortcut.register(accelerator, () => {
+      executePlaybackCommand(ytmView, command)
+    })
+    if (!success) {
+      console.warn(`[media-keys] Failed to register ${accelerator}`)
+    }
+  }
 
   // Window control IPC handlers
   ipcMain.on('window-minimize', () => {
@@ -69,6 +107,13 @@ app.whenReady().then(() => {
     executePlaybackCommand(ytmView, command)
   })
 
+  // Seek-to-position IPC handler (for mini player progress bar)
+  ipcMain.on('seek-to', (_event, seconds: number) => {
+    if (typeof seconds === 'number' && seconds >= 0) {
+      seekTo(ytmView, seconds)
+    }
+  })
+
   // Notify renderer of maximize state changes (D-08)
   mainWindow.on('maximize', () => {
     mainWindow?.webContents.send('maximize-change', true)
@@ -80,6 +125,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+  globalShortcut.unregisterAll()
   stopMetadataPolling()
   app.quit()
 })

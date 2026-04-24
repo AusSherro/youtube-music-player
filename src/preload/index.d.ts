@@ -12,6 +12,9 @@ export interface ElectronAPI {
   previous: () => void
   toggleMiniPlayer: () => void
   expandFromMini: () => void
+  seek: (seconds: number) => void
+  onNavigationState: (callback: (onYTM: boolean) => void) => void
+  onYtmLoaded: (callback: () => void) => void
 }
 
 declare global {

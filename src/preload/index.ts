@@ -19,5 +19,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   previous: () => ipcRenderer.send('playback-command', 'previous'),
   // Mini player toggle
   toggleMiniPlayer: () => ipcRenderer.send('toggle-mini-player'),
-  expandFromMini: () => ipcRenderer.send('expand-from-mini')
+  expandFromMini: () => ipcRenderer.send('expand-from-mini'),
+  // Seek to position in seconds
+  seek: (seconds: number) => ipcRenderer.send('seek-to', seconds),
+  // Navigation state subscription (true = on YTM, false = navigated away)
+  onNavigationState: (callback: (onYTM: boolean) => void) => {
+    ipcRenderer.on('navigation-state', (_event, onYTM) => callback(onYTM))
+  },
+  // YTM loaded signal (for splash screen)
+  onYtmLoaded: (callback: () => void) => {
+    ipcRenderer.on('ytm-loaded', () => callback())
+  }
 })

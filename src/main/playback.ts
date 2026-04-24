@@ -12,6 +12,19 @@ const COMMAND_SELECTORS: Record<PlaybackCommand, string> = {
 }
 
 /**
+ * Seek to a specific position (in seconds) in the YouTube Music player.
+ */
+export async function seekTo(ytmView: WebContentsView, seconds: number): Promise<void> {
+  try {
+    await ytmView.webContents.executeJavaScript(
+      `(() => { const v = document.querySelector('video'); if (v) v.currentTime = ${Math.max(0, seconds)}; })()`
+    )
+  } catch {
+    console.warn('[playback] Failed to seek to position:', seconds)
+  }
+}
+
+/**
  * Execute a playback command by clicking the corresponding DOM button
  * inside the YouTube Music page.
  */
