@@ -2,6 +2,8 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './window'
 import { startMetadataPolling, stopMetadataPolling } from './metadata'
+import { executePlaybackCommand } from './playback'
+import type { PlaybackCommand } from '../shared/types'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -39,6 +41,11 @@ app.whenReady().then(() => {
 
   ipcMain.handle('window-is-maximized', () => {
     return mainWindow?.isMaximized() ?? false
+  })
+
+  // Playback control IPC handler (D-05, D-09)
+  ipcMain.on('playback-command', (_event, command: PlaybackCommand) => {
+    executePlaybackCommand(ytmView, command)
   })
 
   // Notify renderer of maximize state changes (D-08)
