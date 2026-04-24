@@ -13,7 +13,7 @@ last_updated: "2026-04-24"
 
 | Phase | Name | Status | Plans | Date |
 |-------|------|--------|-------|------|
-| 01 | Core Wrapper & Window Chrome | 1/2 | In Progress|  |
+| 01 | Core Wrapper & Window Chrome | 2/2 | Complete   | 2026-04-24 |
 | 02 | Metadata Extraction & Playback Controls | Planned | — | — |
 | 03 | Mini Player | Planned | — | — |
 | 04 | Media Keys & Polish | Planned | — | — |
@@ -30,7 +30,7 @@ last_updated: "2026-04-24"
 
 Plans:
 - [x] 01-01-PLAN.md — Scaffold Electron project with WebContentsView wrapper
-- [ ] 01-02-PLAN.md — Custom dark title bar with window controls
+- [x] 01-02-PLAN.md — Custom dark title bar with window controls
 
 **Success Criteria:** App launches, loads YouTube Music, sign-in works, audio plays, title bar controls function.
 
