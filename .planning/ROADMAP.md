@@ -16,7 +16,7 @@ last_updated: "2026-04-24"
 | 01 | Core Wrapper & Window Chrome | 2/2 | Complete    | 2026-04-24 |
 | 02 | Metadata Extraction & Playback Controls | 1/1 | Complete    | 2026-04-24 |
 | 03 | Mini Player | 2/2 | Complete    | 2026-04-24 |
-| 04 | Media Keys & Polish | 0/2 | Planned    | — |
+| 04 | Media Keys & Polish | 2/2 | Complete    | 2026-04-24 |
 
 ## Phases
 
@@ -68,8 +68,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Media keys, seek IPC, lifecycle edge cases (reload, navigation)
-- [ ] 04-02-PLAN.md — Progress bar, splash screen, app icon, navigation-away UI
+- [x] 04-01-PLAN.md — Media keys, seek IPC, lifecycle edge cases (reload, navigation)
+- [x] 04-02-PLAN.md — Progress bar, splash screen, app icon, navigation-away UI
 
 **Success Criteria:** Media keys control playback globally, progress bar shows and seeks, splash screen on startup, navigation-away handled, reload recovery works.
 
