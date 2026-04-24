@@ -12,7 +12,7 @@ btnMinimize.addEventListener('click', () => window.electronAPI.minimize())
 btnMaximize.addEventListener('click', () => window.electronAPI.maximize())
 btnClose.addEventListener('click', () => window.electronAPI.close())
 btnMini.addEventListener('click', () => {
-  // Wired in Phase 3 — no-op for now
+  window.electronAPI.toggleMiniPlayer()
 })
 
 function updateMaximizeIcon(isMaximized: boolean): void {

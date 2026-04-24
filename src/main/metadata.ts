@@ -102,7 +102,8 @@ const scrapeScript = buildScrapeScript()
  */
 export function startMetadataPolling(
   ytmView: WebContentsView,
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
+  miniPlayer?: BrowserWindow | null
 ): void {
   if (pollTimer) return // already polling
 
@@ -117,6 +118,9 @@ export function startMetadataPolling(
       if (metadataJson !== lastMetadataJson) {
         lastMetadataJson = metadataJson
         mainWindow.webContents.send('metadata-update', metadata)
+        if (miniPlayer && !miniPlayer.isDestroyed()) {
+          miniPlayer.webContents.send('metadata-update', metadata)
+        }
       }
 
       consecutiveFailures = 0
@@ -130,6 +134,9 @@ export function startMetadataPolling(
       if (consecutiveFailures <= 1) {
         lastMetadataJson = null
         mainWindow.webContents.send('metadata-update', null)
+        if (miniPlayer && !miniPlayer.isDestroyed()) {
+          miniPlayer.webContents.send('metadata-update', null)
+        }
       }
     }
   }, POLL_INTERVAL_MS)

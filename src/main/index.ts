@@ -1,11 +1,13 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './window'
+import { createMiniPlayer } from './mini-player'
 import { startMetadataPolling, stopMetadataPolling } from './metadata'
 import { executePlaybackCommand } from './playback'
 import type { PlaybackCommand } from '../shared/types'
 
 let mainWindow: BrowserWindow | null = null
+let miniPlayer: BrowserWindow | null = null
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.ytp.app')
@@ -17,9 +19,12 @@ app.whenReady().then(() => {
   const { mainWindow: win, ytmView } = createMainWindow()
   mainWindow = win
 
+  // Create mini player (starts hidden)
+  miniPlayer = createMiniPlayer()
+
   // Start metadata polling after YTM page loads (DOM must be ready)
   ytmView.webContents.on('did-finish-load', () => {
-    startMetadataPolling(ytmView, win)
+    startMetadataPolling(ytmView, win, miniPlayer)
   })
 
   // Window control IPC handlers
@@ -37,6 +42,22 @@ app.whenReady().then(() => {
 
   ipcMain.on('window-close', () => {
     mainWindow?.close()
+  })
+
+  // Mini player toggle IPC handlers
+  ipcMain.on('toggle-mini-player', () => {
+    mainWindow?.hide()
+    miniPlayer?.show()
+  })
+
+  ipcMain.on('expand-from-mini', () => {
+    miniPlayer?.hide()
+    mainWindow?.show()
+  })
+
+  // Closing mini player quits the app
+  miniPlayer.on('close', () => {
+    app.quit()
   })
 
   ipcMain.handle('window-is-maximized', () => {
