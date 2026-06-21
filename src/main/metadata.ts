@@ -9,10 +9,22 @@ let lastMetadataJson: string | null = null
 let consecutiveFailures = 0
 let cachedArtUrl: string | null = null
 let cachedArtDataUrl: string | null = null
+// Original (DOM) art URL last broadcast on the 'album-art-update' channel.
+// null means we last broadcast "no art".
+let lastArtUrlSent: string | null = null
 
 async function fetchAlbumArtAsDataUrl(url: string): Promise<string | null> {
   // Return cached version if URL hasn't changed
   if (url === cachedArtUrl && cachedArtDataUrl) return cachedArtDataUrl
+
+  // The URL comes from the page DOM — only fetch remote http(s) images,
+  // never file:// or other local schemes.
+  try {
+    const protocol = new URL(url).protocol
+    if (protocol !== 'https:' && protocol !== 'http:') return null
+  } catch {
+    return null
+  }
 
   try {
     const response = await net.fetch(url)
@@ -25,6 +37,22 @@ async function fetchAlbumArtAsDataUrl(url: string): Promise<string | null> {
     return dataUrl
   } catch {
     return null
+  }
+}
+
+/**
+ * Broadcast the album art data URL (or null) to all renderer windows.
+ */
+function broadcastAlbumArt(
+  mainWindow: BrowserWindow,
+  miniPlayer: BrowserWindow | null | undefined,
+  dataUrl: string | null
+): void {
+  if (!mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('album-art-update', dataUrl)
+  }
+  if (miniPlayer && !miniPlayer.isDestroyed()) {
+    miniPlayer.webContents.send('album-art-update', dataUrl)
   }
 }
 
@@ -140,11 +168,21 @@ export function startMetadataPolling(
       if (metadataJson !== lastMetadataJson) {
         lastMetadataJson = metadataJson
 
-        // Convert album art URL to base64 data URL for renderers
-        if (metadata?.albumArtUrl) {
-          const dataUrl = await fetchAlbumArtAsDataUrl(metadata.albumArtUrl)
-          if (dataUrl) {
-            metadata.albumArtUrl = dataUrl
+        // Album art is heavy (~100KB base64). Resolve and broadcast it only
+        // when the source URL actually changes — not on every poll tick.
+        const currentArtUrl = metadata?.albumArtUrl ?? null
+        if (currentArtUrl !== lastArtUrlSent) {
+          if (currentArtUrl === null) {
+            lastArtUrlSent = null
+            broadcastAlbumArt(mainWindow, miniPlayer, null)
+          } else {
+            const dataUrl = await fetchAlbumArtAsDataUrl(currentArtUrl)
+            // Only lock in the URL once the fetch succeeds, so a transient
+            // failure is retried on the next tick.
+            if (dataUrl) {
+              lastArtUrlSent = currentArtUrl
+              broadcastAlbumArt(mainWindow, miniPlayer, dataUrl)
+            }
           }
         }
 
@@ -166,6 +204,8 @@ export function startMetadataPolling(
       // Emit null on failure so renderers know metadata is unavailable
       if (consecutiveFailures <= 1) {
         lastMetadataJson = null
+        // Force album art to re-broadcast once metadata recovers
+        lastArtUrlSent = null
         if (!mainWindow.isDestroyed()) {
           mainWindow.webContents.send('metadata-update', null)
         }
@@ -187,4 +227,5 @@ export function stopMetadataPolling(): void {
   }
   lastMetadataJson = null
   consecutiveFailures = 0
+  lastArtUrlSent = null
 }

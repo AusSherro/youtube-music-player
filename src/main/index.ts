@@ -3,8 +3,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './window'
 import { createMiniPlayer } from './mini-player'
 import { startMetadataPolling, stopMetadataPolling } from './metadata'
-import { executePlaybackCommand } from './playback'
-import { seekTo } from './playback'
+import { executePlaybackCommand, seekTo } from './playback'
 import type { PlaybackCommand } from '../shared/types'
 
 let mainWindow: BrowserWindow | null = null
@@ -20,19 +19,31 @@ app.whenReady().then(() => {
   const { mainWindow: win, ytmView, showYtmView } = createMainWindow()
   mainWindow = win
 
+  // Closing the main window quits the app. The mini player is created up front
+  // and kept hidden, so it would otherwise keep the process alive and prevent
+  // 'window-all-closed' from ever firing.
+  win.on('close', () => {
+    app.quit()
+  })
+
   // Create mini player (starts hidden)
   miniPlayer = createMiniPlayer()
 
   // Start metadata polling after YTM page loads (DOM must be ready)
+  let ytmRevealed = false
   ytmView.webContents.on('did-finish-load', () => {
-    // Reveal YTM view (was hidden so splash screen could show)
-    showYtmView()
+    // Reveal the YTM view only once (it was hidden so the splash could show).
+    // Later loads (sign-in redirects, reloads) keep the view in place.
+    if (!ytmRevealed) {
+      ytmRevealed = true
+      showYtmView()
+      // Signal renderer to hide splash screen (D-08)
+      win.webContents.send('ytm-loaded')
+    }
 
+    // Re-attach metadata polling on every (re)load (D-12)
     stopMetadataPolling()
     startMetadataPolling(ytmView, win, miniPlayer)
-
-    // Signal renderer to hide splash screen (D-08)
-    win.webContents.send('ytm-loaded')
   })
 
   // Navigation-away detection (D-10)
@@ -96,7 +107,12 @@ app.whenReady().then(() => {
     mainWindow?.show()
   })
 
-  // Closing mini player quits the app
+  // Mini player close button quits the app
+  ipcMain.on('mini-player-close', () => {
+    app.quit()
+  })
+
+  // Closing the mini player window (Alt+F4, taskbar) also quits the app
   miniPlayer.on('close', () => {
     app.quit()
   })

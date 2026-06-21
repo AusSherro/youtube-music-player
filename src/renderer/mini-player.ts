@@ -17,25 +17,28 @@ const navAway = document.getElementById('nav-away')!
 
 let currentDuration = 0
 
+// Apply album art, or show the placeholder when null
+function setAlbumArt(dataUrl: string | null): void {
+  if (dataUrl) {
+    albumArt.classList.remove('hidden')
+    albumArt.src = dataUrl
+  } else {
+    albumArt.classList.add('hidden')
+    albumArt.removeAttribute('src')
+  }
+}
+
 // Handle album art load errors — show fallback
 albumArt.addEventListener('error', () => {
   albumArt.classList.add('hidden')
   albumArt.removeAttribute('src')
 })
 
-// Metadata subscription
+// Metadata subscription (lightweight — album art arrives on its own channel)
 window.electronAPI.onMetadataUpdate((metadata) => {
   if (metadata) {
     trackTitle.textContent = metadata.title || 'Unknown'
     trackArtist.textContent = metadata.artist || 'Unknown artist'
-
-    if (metadata.albumArtUrl) {
-      albumArt.classList.remove('hidden')
-      albumArt.src = metadata.albumArtUrl
-    } else {
-      albumArt.classList.add('hidden')
-      albumArt.removeAttribute('src')
-    }
 
     // Update play/pause icon
     btnPlay.innerHTML = metadata.isPlaying ? pauseSVG : playSVG
@@ -53,15 +56,19 @@ window.electronAPI.onMetadataUpdate((metadata) => {
   } else {
     trackTitle.textContent = 'Not playing'
     trackArtist.textContent = ''
-    albumArt.classList.add('hidden')
-    albumArt.removeAttribute('src')
     btnPlay.innerHTML = playSVG
     btnPlay.setAttribute('aria-label', 'Play')
     btnPlay.setAttribute('title', 'Play')
 
     progressFill.style.width = '0%'
     currentDuration = 0
+    setAlbumArt(null)
   }
+})
+
+// Album art subscription — only fires when the art actually changes
+window.electronAPI.onAlbumArtUpdate((dataUrl) => {
+  setAlbumArt(dataUrl)
 })
 
 // Playback controls
@@ -71,7 +78,7 @@ btnNext.addEventListener('click', () => window.electronAPI.next())
 
 // Window controls
 btnExpand.addEventListener('click', () => window.electronAPI.expandFromMini())
-btnClose.addEventListener('click', () => window.electronAPI.close())
+btnClose.addEventListener('click', () => window.electronAPI.closeMiniPlayer())
 
 // Progress bar click-to-seek (D-05)
 progressContainer.addEventListener('click', (e) => {

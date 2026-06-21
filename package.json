@@ -1,6 +1,6 @@
 {
   "name": "ytp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "YouTube Music Desktop Player",
   "main": "./out/main/index.js",
   "type": "module",

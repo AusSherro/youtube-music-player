@@ -7,11 +7,13 @@ export interface ElectronAPI {
   isMaximized: () => Promise<boolean>
   onMaximizeChange: (callback: (isMaximized: boolean) => void) => void
   onMetadataUpdate: (callback: (metadata: NowPlayingMetadata | null) => void) => void
+  onAlbumArtUpdate: (callback: (dataUrl: string | null) => void) => void
   playPause: () => void
   next: () => void
   previous: () => void
   toggleMiniPlayer: () => void
   expandFromMini: () => void
+  closeMiniPlayer: () => void
   seek: (seconds: number) => void
   onNavigationState: (callback: (onYTM: boolean) => void) => void
   onYtmLoaded: (callback: () => void) => void
