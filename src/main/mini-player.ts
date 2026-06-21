@@ -51,20 +51,20 @@ export function createMiniPlayer(): BrowserWindow {
   // Set always-on-top level to floating
   miniPlayer.setAlwaysOnTop(true, 'floating')
 
-  // Persist position and size on move/resize
-  miniPlayer.on('move', () => {
-    if (!miniPlayer.isDestroyed()) {
-      const bounds = miniPlayer.getBounds()
-      store.set('miniPlayer.bounds', bounds)
-    }
-  })
+  // Persist position and size, debounced — move/resize fire dozens of times per
+  // second while dragging, and each store.set() is a synchronous disk write.
+  let saveTimer: ReturnType<typeof setTimeout> | null = null
+  const persistBounds = (): void => {
+    if (saveTimer) clearTimeout(saveTimer)
+    saveTimer = setTimeout(() => {
+      if (!miniPlayer.isDestroyed()) {
+        store.set('miniPlayer.bounds', miniPlayer.getBounds())
+      }
+    }, 300)
+  }
 
-  miniPlayer.on('resize', () => {
-    if (!miniPlayer.isDestroyed()) {
-      const bounds = miniPlayer.getBounds()
-      store.set('miniPlayer.bounds', bounds)
-    }
-  })
+  miniPlayer.on('move', persistBounds)
+  miniPlayer.on('resize', persistBounds)
 
   // Load mini player HTML
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {

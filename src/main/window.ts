@@ -1,4 +1,4 @@
-import { BrowserWindow, WebContentsView } from 'electron'
+import { BrowserWindow, WebContentsView, shell } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 
@@ -73,11 +73,22 @@ export function createMainWindow(): MainWindowResult {
   // Configure session persistence (default session persists cookies to disk)
   // Widevine DRM is included by default in Electron 41+
 
-  // Handle window open requests (Google OAuth popups)
+  // Handle window open requests (target=_blank links, OAuth popups)
   ytmView.webContents.setWindowOpenHandler(({ url }) => {
-    // Allow Google OAuth in the same view
-    if (url.includes('accounts.google.com')) {
-      ytmView.webContents.loadURL(url)
+    try {
+      const { hostname, protocol } = new URL(url)
+      // Keep Google sign-in inside the embedded view
+      if (hostname === 'accounts.google.com') {
+        ytmView.webContents.loadURL(url)
+        return { action: 'deny' }
+      }
+      // Open genuinely external links (YouTube, artist sites, policies) in the
+      // user's default browser rather than silently swallowing the click.
+      if ((protocol === 'https:' || protocol === 'http:') && hostname !== 'music.youtube.com') {
+        shell.openExternal(url)
+      }
+    } catch {
+      // Ignore malformed URLs
     }
     return { action: 'deny' }
   })

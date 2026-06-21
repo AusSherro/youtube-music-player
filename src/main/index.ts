@@ -9,7 +9,28 @@ import type { PlaybackCommand } from '../shared/types'
 let mainWindow: BrowserWindow | null = null
 let miniPlayer: BrowserWindow | null = null
 
+// Enforce a single running instance. A second launch focuses the existing
+// window instead of spawning a duplicate (which would fight over media keys).
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    const target = mainWindow?.isVisible()
+      ? mainWindow
+      : miniPlayer?.isVisible()
+        ? miniPlayer
+        : mainWindow
+    if (target && !target.isDestroyed()) {
+      if (target.isMinimized()) target.restore()
+      target.show()
+      target.focus()
+    }
+  })
+}
+
 app.whenReady().then(() => {
+  if (!gotTheLock) return
   electronApp.setAppUserModelId('com.ytp.app')
 
   app.on('browser-window-created', (_, window) => {
@@ -44,6 +65,18 @@ app.whenReady().then(() => {
     // Re-attach metadata polling on every (re)load (D-12)
     stopMetadataPolling()
     startMetadataPolling(ytmView, win, miniPlayer)
+  })
+
+  // If the initial load fails (e.g. offline at launch), still reveal the view
+  // so the user sees YTM's error page instead of an endless splash spinner.
+  ytmView.webContents.on('did-fail-load', (_event, errorCode, _desc, _url, isMainFrame) => {
+    // -3 (ERR_ABORTED) fires during normal redirects/navigations — ignore it.
+    if (!isMainFrame || errorCode === -3) return
+    if (!ytmRevealed) {
+      ytmRevealed = true
+      showYtmView()
+      win.webContents.send('ytm-loaded')
+    }
   })
 
   // Navigation-away detection (D-10)
